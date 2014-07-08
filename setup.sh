@@ -111,7 +111,7 @@ echo "Installing necessary dependencies..."
 apt-get update > /dev/null
 apt-get install libnss3-dev libnspr4-dev pkg-config libpam0g-dev libcap-ng-dev libcap-ng-utils libselinux1-dev libcurl4-nss-dev libgmp3-dev flex bison gcc make libunbound-dev libnss3-tools wget -y  > /dev/null
 
-if [ "$?" = "0" ]
+if [ "$?" = "1" ]
 then
   echo "An unexpected error occured!"
   exit 0
@@ -120,7 +120,7 @@ fi
 echo "Installing XL2TPD..."
 apt-get install xl2tpd -y > /dev/null
 
-if [ "$?" = "0" ]
+if [ "$?" = "1" ]
 then
   echo "An unexpected error occured!"
   exit 0
@@ -137,7 +137,7 @@ make programs
 echo "Installing LibreSwan..."
 make install
 
-if [ "$?" = "0" ]
+if [ "$?" = "1" ]
 then
   echo "An unexpected error occured!"
   exit 0
