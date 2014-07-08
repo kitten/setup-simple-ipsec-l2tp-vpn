@@ -277,6 +277,8 @@ cat > /etc/iptables.rules <<EOF
 -A INPUT -i lo -j ACCEPT
 -A INPUT -p icmp --icmp-type 255 -j ICMPALL
 -A INPUT -p udp --dport 67:68 --sport 67:68 -j ACCEPT
+-A INPUT -p tcp --dport 80 -j ACCEPT
+-A INPUT -p tcp --dport 443 -j ACCEPT
 -A INPUT -p tcp --dport 22 -j ACCEPT
 -A INPUT -p udp -m multiport --dports 500,4500 -j ACCEPT
 -A INPUT -p udp --dport 1701 -m policy --dir in --pol ipsec -j ACCEPT
