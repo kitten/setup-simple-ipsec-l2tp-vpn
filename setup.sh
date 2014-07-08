@@ -133,9 +133,9 @@ echo "Downloading LibreSwan's source..."
 wget -qO- https://download.libreswan.org/libreswan-3.8.tar.gz | tar xvz > /dev/null
 cd libreswan-3.8
 echo "Compiling LibreSwan..."
-make programs
+make programs > /dev/null
 echo "Installing LibreSwan..."
-make install
+make install > /dev/null
 
 if [ "$?" = "1" ]
 then
@@ -335,18 +335,18 @@ echo "Applying changes..."
 
 if [ ! -f /etc/ipsec.d/cert8.db ] ; then
    echo > /var/tmp/libreswan-nss-pwd
-   /usr/bin/certutil -N -f /var/tmp/libreswan-nss-pwd -d /etc/ipsec.d
+   /usr/bin/certutil -N -f /var/tmp/libreswan-nss-pwd -d /etc/ipsec.d > /dev/null
    /bin/rm -f /var/tmp/libreswan-nss-pwd
 fi
 
-/sbin/sysctl -p
+/sbin/sysctl -p > /dev/null
 /bin/chmod +x /etc/network/if-pre-up.d/iptablesload
 /sbin/iptables-restore < /etc/iptables.rules
 
 echo "Starting IPSec and XL2TP services..."
 
-/usr/sbin/service ipsec restart
-/usr/sbin/service xl2tpd restart
+/usr/sbin/service ipsec restart > /dev/null
+/usr/sbin/service xl2tpd restart > /dev/null
 
 echo "Success!"
 echo ""
