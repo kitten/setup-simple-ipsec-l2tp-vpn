@@ -46,8 +46,8 @@ done
 
 echo ""
 
-# Generate a random password
-generatePwd () {
+# Generate a random key
+generateKey () {
   P1=`cat /dev/urandom | tr -cd abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789 | head -c 3`
   P2=`cat /dev/urandom | tr -cd abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789 | head -c 3`
   P3=`cat /dev/urandom | tr -cd abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789 | head -c 3`
@@ -56,12 +56,12 @@ generatePwd () {
 
 echo "The VPN needs a private PSK key."
 echo "Do you wish to set it yourself?"
-echo "(Otherwise a random password is generated)"
+echo "(Otherwise a random key is generated)"
 while true; do
   read -p "" yn
   case $yn in
-      [Yy]* ) echo ""; echo "Enter your preferred password."; read -p "" IPSEC_PSK; break;;
-      [Nn]* ) generatePwd; break;;
+      [Yy]* ) echo ""; echo "Enter your preferred key:"; read -p "" IPSEC_PSK; break;;
+      [Nn]* ) generateKey; break;;
       * ) echo "Please answer with Yes or No [y|n].";;
   esac
 done
