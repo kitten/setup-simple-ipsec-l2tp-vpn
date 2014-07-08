@@ -27,6 +27,8 @@ The script will lead you through the installation process.
 
 During installation you have to enter an IPSec PSK Key, a custom username if you wish, and a password.
 
+Port `1701` must be opened for the VPN to work!
+
 Enjoy your very own (secure) VPN!
 
 Some Notes

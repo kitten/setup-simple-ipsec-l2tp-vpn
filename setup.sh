@@ -90,8 +90,10 @@ while true; do
   fi
 done
 
+echo ""
+
 PUBLICIP=`wget -q -O - http://ipecho.net/plain`
-if [ "x$IP" = "x" ]
+if [ "x$PUBLICIP" = "x" ]
 then
   echo "Your server's external IP address could not get detected!"
   echo "Please enter the IP yourself:"
