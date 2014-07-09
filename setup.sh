@@ -82,7 +82,7 @@ echo ""
 
 while true; do
   read -p "Please enter your preferred password: " VPN_PASSWORD
-  if [ "x$VPN_USER" = "x" ]
+  if [ "x$VPN_PASSWORD" = "x" ]
   then
     echo "Please enter a valid password!"
   else
