@@ -231,88 +231,6 @@ cat > /etc/ppp/chap-secrets <<EOF
 $VPN_USER  l2tpd  $VPN_PASSWORD  *
 EOF
 
-/bin/cp -f /etc/sysctl.conf /etc/sysctl.conf.old
-cat > /etc/sysctl.conf <<EOF
-kernel.sysrq = 0
-kernel.core_uses_pid = 1
-net.ipv4.tcp_syncookies = 1
-kernel.msgmnb = 65536
-kernel.msgmax = 65536
-kernel.shmmax = 68719476736
-kernel.shmall = 4294967296
-net.ipv4.ip_forward = 1
-net.ipv4.conf.all.accept_source_route = 0
-net.ipv4.conf.default.accept_source_route = 0
-net.ipv4.conf.all.log_martians = 1
-net.ipv4.conf.default.log_martians = 1
-net.ipv4.conf.all.accept_redirects = 0
-net.ipv4.conf.default.accept_redirects = 0
-net.ipv4.conf.all.send_redirects = 0
-net.ipv4.conf.default.send_redirects = 0
-net.ipv4.conf.all.rp_filter = 0
-net.ipv4.conf.default.rp_filter = 0
-net.ipv6.conf.all.disable_ipv6=1
-net.ipv6.conf.default.disable_ipv6=1
-net.ipv4.icmp_echo_ignore_broadcasts = 1
-net.ipv4.icmp_ignore_bogus_error_responses = 1
-net.ipv4.conf.all.secure_redirects = 0
-net.ipv4.conf.default.secure_redirects = 0
-kernel.randomize_va_space = 1
-net.core.wmem_max=12582912
-net.core.rmem_max=12582912
-net.ipv4.tcp_rmem= 10240 87380 12582912
-net.ipv4.tcp_wmem= 10240 87380 12582912
-EOF
-
-/bin/cp -f /etc/iptables.rules /etc/iptables.rules.old
-cat > /etc/iptables.rules <<EOF
-*filter
-:INPUT ACCEPT [0:0]
-:FORWARD ACCEPT [0:0]
-:OUTPUT ACCEPT [0:0]
-:ICMPALL - [0:0]
-:ZREJ - [0:0]
--A INPUT -m conntrack --ctstate INVALID -j DROP
--A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
--A INPUT -i lo -j ACCEPT
--A INPUT -p icmp --icmp-type 255 -j ICMPALL
--A INPUT -p udp --dport 67:68 --sport 67:68 -j ACCEPT
--A INPUT -p tcp --dport 80 -j ACCEPT
--A INPUT -p tcp --dport 443 -j ACCEPT
--A INPUT -p tcp --dport 22 -j ACCEPT
--A INPUT -p udp -m multiport --dports 500,4500 -j ACCEPT
--A INPUT -p udp --dport 1701 -m policy --dir in --pol ipsec -j ACCEPT
--A INPUT -p udp --dport 1701 -j DROP
--A INPUT -j ZREJ
--A FORWARD -i eth+ -o ppp+ -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
--A FORWARD -i ppp+ -o eth+ -j ACCEPT
--A FORWARD -j ZREJ
--A ICMPALL -p icmp --fragment -j DROP
--A ICMPALL -p icmp --icmp-type 0 -j ACCEPT
--A ICMPALL -p icmp --icmp-type 3 -j ACCEPT
--A ICMPALL -p icmp --icmp-type 4 -j ACCEPT
--A ICMPALL -p icmp --icmp-type 8 -j ACCEPT
--A ICMPALL -p icmp --icmp-type 11 -j ACCEPT
--A ICMPALL -p icmp -j DROP
--A ZREJ -p tcp -j REJECT --reject-with tcp-reset
--A ZREJ -p udp -j REJECT --reject-with icmp-port-unreachable
--A ZREJ -j REJECT --reject-with icmp-proto-unreachable
-COMMIT
-*nat
-:PREROUTING ACCEPT [0:0]
-:INPUT ACCEPT [0:0]
-:OUTPUT ACCEPT [0:0]
-:POSTROUTING ACCEPT [0:0]
--A POSTROUTING -s 192.168.42.0/24 -o eth+ -j SNAT --to-source $PUBLICIP
-COMMIT
-EOF
-
-cat > /etc/network/if-pre-up.d/iptablesload <<EOF
-#!/bin/sh
-/sbin/iptables-restore < /etc/iptables.rules
-exit 0
-EOF
-
 /bin/cp -f /etc/rc.local /etc/rc.local.old
 cat > /etc/rc.local <<EOF
 #!/bin/sh -e
@@ -327,13 +245,26 @@ cat > /etc/rc.local <<EOF
 # bits.
 #
 # By default this script does nothing.
+iptables --table nat --append POSTROUTING --jump MASQUERADE
+echo 1 > /proc/sys/net/ipv4/ip_forward
+for each in /proc/sys/net/ipv4/conf/*
+do
+  echo 0 > $each/accept_redirects
+  echo 0 > $each/send_redirects
+done
 /usr/sbin/service ipsec restart
 /usr/sbin/service xl2tpd restart
-echo 1 > /proc/sys/net/ipv4/ip_forward
-exit 0
 EOF
 
 echo "Applying changes..."
+
+iptables --table nat --append POSTROUTING --jump MASQUERADE > /dev/null
+echo 1 > /proc/sys/net/ipv4/ip_forward
+for each in /proc/sys/net/ipv4/conf/*
+do
+  echo 0 > $each/accept_redirects
+  echo 0 > $each/send_redirects
+done
 
 if [ ! -f /etc/ipsec.d/cert8.db ] ; then
    echo > /var/tmp/libreswan-nss-pwd
@@ -342,8 +273,6 @@ if [ ! -f /etc/ipsec.d/cert8.db ] ; then
 fi
 
 /sbin/sysctl -p > /dev/null
-/bin/chmod +x /etc/network/if-pre-up.d/iptablesload
-/sbin/iptables-restore < /etc/iptables.rules
 
 echo "Starting IPSec and XL2TP services..."
 
