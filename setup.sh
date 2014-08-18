@@ -130,8 +130,8 @@ fi
 mkdir -p /opt/src
 cd /opt/src
 echo "Downloading LibreSwan's source..."
-wget -qO- https://download.libreswan.org/libreswan-3.9.tar.gz | tar xvz > /dev/null
-cd libreswan-3.9
+wget -qO- https://download.libreswan.org/libreswan-3.8.tar.gz | tar xvz > /dev/null
+cd libreswan-3.8
 echo "Compiling LibreSwan..."
 make programs > /dev/null
 echo "Installing LibreSwan..."
