@@ -117,7 +117,7 @@ while true; do
   esac
 done
 
-echo "The IP address that will be used is $IPADDRESS"
+echo "The IP address that will be used in the config is $IPADDRESS"
 
 echo ""
 echo "============================================================"
