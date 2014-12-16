@@ -102,6 +102,23 @@ else
   echo "Detected your server's external IP address: $PUBLICIP"
 fi
 
+PRIVATEIP=$(ip addr | awk '/inet/ && /eth0/{sub(/\/.*$/,"",$2); print $2}')
+
+echo ""
+echo "Are you on Amazon EC2?"
+echo "If you answer no to this and you are on EC2, clients will be unable to connect to your VPN."
+echo "This is needed because EC2 puts your instance behind one-to-one NAT, and using the public IP in the config causes incoming connections to fail with auth failures."
+while true; do
+  read -p "" yn
+  case $yn in
+    [Yy]* ) IPADDRESS=$PRIVATEIP; break;;
+    [Nn]* ) break;;
+    * ) echo "Please answer with Yes or No [y|n].";;
+  esac
+done
+
+echo "The IP address that will be used in the config is $IPADDRESS"
+
 echo ""
 echo "============================================================"
 echo ""
@@ -130,8 +147,8 @@ fi
 mkdir -p /opt/src
 cd /opt/src
 echo "Downloading LibreSwan's source..."
-wget -qO- https://download.libreswan.org/libreswan-3.10.tar.gz | tar xvz > /dev/null
-cd libreswan-3.10
+wget -qO- https://download.libreswan.org/libreswan-3.12.tar.gz | tar xvz > /dev/null
+cd libreswan-3.12
 echo "Compiling LibreSwan..."
 make programs > /dev/null
 echo "Installing LibreSwan..."
@@ -160,9 +177,9 @@ config setup
 conn vpnpsk
   connaddrfamily=ipv4
   auto=add
-  left=$PUBLICIP
-  leftid=$PUBLICIP
-  leftsubnet=$PUBLICIP/32
+  left=$IPADDRESS
+  leftid=$IPADDRESS
+  leftsubnet=$IPADDRESS/32
   leftnexthop=%defaultroute
   leftprotoport=17/1701
   rightprotoport=17/%any
@@ -183,7 +200,7 @@ conn vpnpsk
 EOF
 
 cat > /etc/ipsec.secrets <<EOF
-$PUBLICIP  %any  : PSK "$IPSEC_PSK"
+$IPADDRESS  %any  : PSK "$IPSEC_PSK"
 EOF
 
 cat > /etc/xl2tpd/xl2tpd.conf <<EOF
