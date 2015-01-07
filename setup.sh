@@ -103,6 +103,7 @@ else
 fi
 
 PRIVATEIP=$(ip addr | awk '/inet/ && /eth0/{sub(/\/.*$/,"",$2); print $2}')
+IPADDRESS=$PUBLICIP
 
 echo ""
 echo "Are you on Amazon EC2?"
