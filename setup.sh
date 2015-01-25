@@ -92,6 +92,9 @@ done
 
 echo ""
 
+apt-get update > /dev/null
+apt-get install wget -y  > /dev/null
+
 PUBLICIP=`wget -q -O - http://wtfismyip.com/text`
 if [ "x$PUBLICIP" = "x" ]
 then
@@ -126,8 +129,7 @@ echo ""
 
 echo "Installing necessary dependencies..."
 
-apt-get update > /dev/null
-apt-get install libnss3-dev libnspr4-dev pkg-config libpam0g-dev libcap-ng-dev libcap-ng-utils libselinux1-dev libcurl4-nss-dev libgmp3-dev flex bison gcc make libunbound-dev libnss3-tools wget -y  > /dev/null
+apt-get install libnss3-dev libnspr4-dev pkg-config libpam0g-dev libcap-ng-dev libcap-ng-utils libselinux1-dev libcurl4-nss-dev libgmp3-dev flex bison gcc make libunbound-dev libnss3-tools -y  > /dev/null
 
 if [ "$?" = "1" ]
 then
@@ -165,7 +167,6 @@ echo "Preparing various configuration files..."
 
 cat > /etc/ipsec.conf <<EOF
 version 2.0
-
 config setup
   dumpdir=/var/run/pluto/
   nat_traversal=yes
@@ -174,7 +175,6 @@ config setup
   protostack=netkey
   nhelpers=0
   interfaces=%defaultroute
-
 conn vpnpsk
   connaddrfamily=ipv4
   auto=add
@@ -207,12 +207,10 @@ EOF
 cat > /etc/xl2tpd/xl2tpd.conf <<EOF
 [global]
 port = 1701
-
 ;debug avp = yes
 ;debug network = yes
 ;debug state = yes
 ;debug tunnel = yes
-
 [lns default]
 ip range = 192.168.42.10-192.168.42.250
 local ip = 192.168.42.1
@@ -245,7 +243,6 @@ EOF
 cat > /etc/ppp/chap-secrets <<EOF
 # Secrets for authentication using CHAP
 # client  server  secret  IP addresses
-
 $VPN_USER  l2tpd  $VPN_PASSWORD  *
 EOF
 
