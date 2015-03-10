@@ -13,6 +13,7 @@ Script has been tested on:
 **Feel free to test it on more distributions and please report back to me!**
 
 Copyright (C) 2014 Phil Plückthun <phil@plckthn.me><br>
+Credits goes to [Edwin Ang (@theroyalstudent)](https://github.com/theroyalstudent/) for fixing up some code :)<br>
 [Based on the work of Lin Song](https://gist.github.com/hwdsl2/9030462) (Copyright 2014)<br>
 [Based on the work of Viljo Viitanen](https://github.com/viljoviitanen/setup-simple-pptp-vpn) (Setup Simple PPTP VPN server for Ubuntu and Debian)
 Based on the work of Thomas Sarlandie (Copyright 2012)

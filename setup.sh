@@ -81,16 +81,21 @@ fi
 echo ""
 
 while true; do
+  stty_orig=`stty -g`
+  stty -echo
   read -p "Please enter your preferred password: " VPN_PASSWORD
   if [ "x$VPN_PASSWORD" = "x" ]
   then
     echo "Please enter a valid password!"
   else
+    stty $stty_orig
     break
   fi
 done
 
 echo ""
+echo ""
+echo "Making sure that apt-get is updated and wget is installed..."
 
 apt-get update > /dev/null
 apt-get install wget -y  > /dev/null
@@ -301,8 +306,18 @@ echo "============================================================"
 echo "Host: $PUBLICIP (Or a domain pointing to your server)"
 echo "IPSec PSK Key: $IPSEC_PSK"
 echo "Username: $VPN_USER"
-echo "Password: $VPN_PASSWORD"
+echo "Password: ********"
 echo "============================================================"
+
+echo "Your VPN server password is hidden. Would you like to reveal it?"
+while true; do
+  read -p "" yn
+  case $yn in
+      [Yy]* ) echo "Password: $VPN_PASSWORD"; break;;
+      [Nn]* ) exit 0;;
+      * ) echo "Please answer with Yes or No [y|n].";;
+  esac
+done
 
 sleep 2
 exit 0
