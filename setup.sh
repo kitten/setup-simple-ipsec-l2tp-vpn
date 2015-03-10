@@ -95,15 +95,19 @@ done
 
 echo ""
 echo ""
+
 echo "Making sure that apt-get is updated and wget is installed..."
 
 apt-get update > /dev/null
-apt-get install wget -y  > /dev/null
+
+if [ `sudo dpkg-query -l | grep wget | wc -l` = 0 ] ; then
+  apt-get install wget -y  > /dev/null
+fi
 
 PUBLICIP=`wget -q -O - http://wtfismyip.com/text`
 if [ "x$PUBLICIP" = "x" ]
 then
-  echo "Your server's external IP address could not get detected!"
+  echo "Your server's external IP address could be detected!"
   echo "Please enter the IP yourself:"
   read -p "" PUBLICIP
 else
