@@ -306,6 +306,8 @@ echo "Starting IPSec and XL2TP services..."
 echo "Success!"
 echo ""
 
+clear
+
 echo "============================================================"
 echo "Host: $PUBLICIP (Or a domain pointing to your server)"
 echo "IPSec PSK Key: $IPSEC_PSK"
@@ -317,11 +319,20 @@ echo "Your VPN server password is hidden. Would you like to reveal it?"
 while true; do
   read -p "" yn
   case $yn in
-      [Yy]* ) echo "Password: $VPN_PASSWORD"; break;;
+      [Yy]* ) clear; break;;
       [Nn]* ) exit 0;;
       * ) echo "Please answer with Yes or No [y|n].";;
   esac
 done
 
-sleep 2
+echo "============================================================"
+echo "Host: $PUBLICIP (Or a domain pointing to your server)"
+echo "IPSec PSK Key: $IPSEC_PSK"
+echo "Username: $VPN_USER"
+echo "Password: $VPN_PASSWORD"
+echo "============================================================"
+
+echo "If you plan to keep the VPN server generated with this script on the internet for a long time (a day or more), consider securing it to possible attacks!"
+
+sleep 1
 exit 0

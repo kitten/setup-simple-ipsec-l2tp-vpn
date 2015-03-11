@@ -29,7 +29,7 @@ The script will lead you through the installation process.
 
 During installation you have to enter an IPSec PSK Key, a custom username if you wish, and a password.
 
-Ports `1701`, `500` and `4500`  must be opened for the VPN to work!
+Ports `1701`, `500` and `4500` must be opened for the VPN to work!
 
 Enjoy your very own (secure) VPN!
 
@@ -45,7 +45,7 @@ To add more accounts, see the file `/etc/ppp/chap-secrets`
 
 *In the future I might add the ability to generate more accounts.*
 
-If you keep the VPN server generated with this script on the internet for a
-long time (days or more), consider securing it to possible attacks!
+If you plan to keep the VPN server generated with this script on the internet for a
+long time (a day or more), consider securing it to possible attacks!
 
 If you run this script on EC2, the IP used in the config files will be different to the instance's public-facing IP. This is because Amazon performs one-to-one NAT on EC2 instances.
