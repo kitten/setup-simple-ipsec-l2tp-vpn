@@ -13,6 +13,7 @@ Script has been tested on:
 **Feel free to test it on more distributions and please report back to me!**
 
 Copyright (C) 2014 Phil Plückthun <phil@plckthn.me><br>
+Credits goes to [Edwin Ang (@theroyalstudent)](https://github.com/theroyalstudent/) for fixing up some code :)<br>
 [Based on the work of Lin Song](https://gist.github.com/hwdsl2/9030462) (Copyright 2014)<br>
 [Based on the work of Viljo Viitanen](https://github.com/viljoviitanen/setup-simple-pptp-vpn) (Setup Simple PPTP VPN server for Ubuntu and Debian)
 Based on the work of Thomas Sarlandie (Copyright 2012)
@@ -28,7 +29,7 @@ The script will lead you through the installation process.
 
 During installation you have to enter an IPSec PSK Key, a custom username if you wish, and a password.
 
-Ports `1701`, `500` and `4500`  must be opened for the VPN to work!
+Ports `1701`, `500` and `4500` must be opened for the VPN to work!
 
 Enjoy your very own (secure) VPN!
 
@@ -44,7 +45,7 @@ To add more accounts, see the file `/etc/ppp/chap-secrets`
 
 *In the future I might add the ability to generate more accounts.*
 
-If you keep the VPN server generated with this script on the internet for a
-long time (days or more), consider securing it to possible attacks!
+If you plan to keep the VPN server generated with this script on the internet for a
+long time (a day or more), consider securing it to possible attacks!
 
 If you run this script on EC2, the IP used in the config files will be different to the instance's public-facing IP. This is because Amazon performs one-to-one NAT on EC2 instances.

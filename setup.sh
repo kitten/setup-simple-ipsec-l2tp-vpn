@@ -81,24 +81,33 @@ fi
 echo ""
 
 while true; do
+  stty_orig=`stty -g`
+  stty -echo
   read -p "Please enter your preferred password: " VPN_PASSWORD
   if [ "x$VPN_PASSWORD" = "x" ]
   then
     echo "Please enter a valid password!"
   else
+    stty $stty_orig
     break
   fi
 done
 
 echo ""
+echo ""
+
+echo "Making sure that apt-get is updated and wget is installed..."
 
 apt-get update > /dev/null
-apt-get install wget -y  > /dev/null
+
+if [ `sudo dpkg-query -l | grep wget | wc -l` = 0 ] ; then
+  apt-get install wget -y  > /dev/null
+fi
 
 PUBLICIP=`wget -q -O - http://wtfismyip.com/text`
 if [ "x$PUBLICIP" = "x" ]
 then
-  echo "Your server's external IP address could not get detected!"
+  echo "Your server's external IP address could not be detected!"
   echo "Please enter the IP yourself:"
   read -p "" PUBLICIP
 else
@@ -297,6 +306,25 @@ echo "Starting IPSec and XL2TP services..."
 echo "Success!"
 echo ""
 
+clear
+
+echo "============================================================"
+echo "Host: $PUBLICIP (Or a domain pointing to your server)"
+echo "IPSec PSK Key: $IPSEC_PSK"
+echo "Username: $VPN_USER"
+echo "Password: ********"
+echo "============================================================"
+
+echo "Your VPN server password is hidden. Would you like to reveal it?"
+while true; do
+  read -p "" yn
+  case $yn in
+      [Yy]* ) clear; break;;
+      [Nn]* ) exit 0;;
+      * ) echo "Please answer with Yes or No [y|n].";;
+  esac
+done
+
 echo "============================================================"
 echo "Host: $PUBLICIP (Or a domain pointing to your server)"
 echo "IPSec PSK Key: $IPSEC_PSK"
@@ -304,5 +332,7 @@ echo "Username: $VPN_USER"
 echo "Password: $VPN_PASSWORD"
 echo "============================================================"
 
-sleep 2
+echo "If you plan to keep the VPN server generated with this script on the internet for a long time (a day or more), consider securing it to possible attacks!"
+
+sleep 1
 exit 0
