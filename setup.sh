@@ -107,7 +107,7 @@ fi
 PUBLICIP=`wget -q -O - http://wtfismyip.com/text`
 if [ "x$PUBLICIP" = "x" ]
 then
-  echo "Your server's external IP address could be detected!"
+  echo "Your server's external IP address could not be detected!"
   echo "Please enter the IP yourself:"
   read -p "" PUBLICIP
 else
