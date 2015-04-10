@@ -16,7 +16,8 @@ Script has been tested on:
 
 Copyright (C) 2014 Phil Plückthun <phil@plckthn.me><br>
 Adapting script for Arch Linux - Dennis Anfossi <danfossi@itfor.it><br>
-Thanks to [Edwin Ang (@theroyalstudent)](https://github.com/theroyalstudent/) for fixing up some code<br>
+Fixing up some code - Edwin Ang [<@theroyalstudent>](https://github.com/theroyalstudent/)
+
 [Based on the work of Lin Song](https://gist.github.com/hwdsl2/9030462) (Copyright 2014)<br>
 [Based on the work of Viljo Viitanen](https://github.com/viljoviitanen/setup-simple-pptp-vpn) (Setup Simple PPTP VPN server for Ubuntu and Debian)
 Based on the work of Thomas Sarlandie (Copyright 2012)
