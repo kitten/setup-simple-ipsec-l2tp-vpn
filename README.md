@@ -1,4 +1,4 @@
-# Setup a simple IPSec/L2TP VPN server for Ubuntu and Debian
+# Setup a simple IPSec/L2TP VPN server for Ubuntu, Arch Linux and Debian
 
 > NOTE: As far as I know, IPSec/L2TP is considered to be one of the most secure protocols!
 > Still I cannot guarantee 100% security!
@@ -8,21 +8,33 @@
 Script has been tested on:
 
 - Digital Ocean: Ubuntu 14.04 x64 (Trusty)
+- Online.net: Arch Linux
+- Amazon Web Services EC2: Arch Linux
 - Amazon Web Services EC2: Ubuntu 14.04 x64 HVM (Trusty)
 
 **Feel free to test it on more distributions and please report back to me!**
 
 Copyright (C) 2014 Phil Plückthun <phil@plckthn.me><br>
-Credits goes to [Edwin Ang (@theroyalstudent)](https://github.com/theroyalstudent/) for fixing up some code :)<br>
+Adapting script for Arch Linux - Dennis Anfossi <danfossi@itfor.it><br>
+Thanks to [Edwin Ang (@theroyalstudent)](https://github.com/theroyalstudent/) for fixing up some code<br>
 [Based on the work of Lin Song](https://gist.github.com/hwdsl2/9030462) (Copyright 2014)<br>
 [Based on the work of Viljo Viitanen](https://github.com/viljoviitanen/setup-simple-pptp-vpn) (Setup Simple PPTP VPN server for Ubuntu and Debian)
 Based on the work of Thomas Sarlandie (Copyright 2012)
 
 # Installation
 
+## For Ubuntu and Debian
+
 ```
 wget https://raw.github.com/philplckthun/setup-simple-ipsec-l2tp-vpn/master/setup.sh
 sudo sh setup.sh
+```
+
+## For Arch Linux
+
+```
+wget https://raw.github.com/philplckthun/setup-simple-ipsec-l2tp-vpn/master/setup_archlinux.sh
+sudo sh setup_archlinux.sh
 ```
 
 The script will lead you through the installation process.
