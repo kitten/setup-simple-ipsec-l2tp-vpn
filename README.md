@@ -38,6 +38,13 @@ wget https://raw.github.com/philplckthun/setup-simple-ipsec-l2tp-vpn/master/setu
 sudo sh setup_archlinux.sh
 ```
 
+## For Fedora
+
+```
+wget https://raw.github.com/philplckthun/setup-simple-ipsec-l2tp-vpn/master/setup_fedora.sh
+sudo sh setup_fedora.sh
+```
+
 The script will lead you through the installation process.
 
 During installation you have to enter an IPSec PSK Key, a custom username if you wish, and a password.
