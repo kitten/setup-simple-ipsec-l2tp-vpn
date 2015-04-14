@@ -96,14 +96,22 @@ done
 echo ""
 echo ""
 
-echo "Making sure that pacman is updated and wget is installed..."
+echo "Making sure that pacman is updated.."
 
 pacman -Syy > /dev/null
+
+echo "Checking for wget and net-tools"
 
 if (pacman -Q wget >/dev/null) ; then 
 	echo "Wget is installed"
 else
 	pacman -S wget --noconfirm > /dev/null
+ fi
+
+if (pacman -Q net-tools >/dev/null) ; then
+        echo "net-tools are installed"
+else
+        pacman -S net-tools --noconfirm > /dev/null
  fi
 
 PUBLICIP=`wget -q -O - http://wtfismyip.com/text`
@@ -295,6 +303,9 @@ done
 /usr/bin/systemctl restart ipsec.service
 /usr/bin/systemctl restart xl2tpd.service
 EOF
+
+#Enable execution flag
+chmod a+x /etc/rc.local
 
 #Enabling rc.local service
 /usr/bin/systemctl enable rc-local.service
