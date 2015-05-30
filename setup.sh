@@ -209,6 +209,7 @@ conn vpnpsk
   dpdaction=clear
 EOF
 
+/bin/cp -f /etc/ipsec.secrets /etc/ipsec.secrets.old
 cat > /etc/ipsec.secrets <<EOF
 $IPADDRESS  %any  : PSK "$IPSEC_PSK"
 EOF
@@ -249,6 +250,7 @@ lcp-echo-interval 60
 connect-delay 5000
 EOF
 
+/bin/cp -f /etc/ppp/chap-secrets /etc/ppp/chap-secrets.old
 cat > /etc/ppp/chap-secrets <<EOF
 # Secrets for authentication using CHAP
 # client  server  secret  IP addresses
