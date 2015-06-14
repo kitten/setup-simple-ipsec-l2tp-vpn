@@ -1,7 +1,7 @@
 #!/bin/sh
 #    Setup Simple IPSec/L2TP VPN server for Ubuntu and Debian
 #
-#    Copyright (C) 2014 Phil Plückthun <phil@plckthn.me>
+#    Copyright (C) 2014-2015 Phil Plückthun <phil@plckthn.me>
 #    Based on the work of Lin Song (Copyright 2014)
 #    Based on the work of Viljo Viitanen (Setup Simple PPTP VPN server for Ubuntu and Debian)
 #    Based on the work of Thomas Sarlandie (Copyright 2012)
@@ -24,9 +24,9 @@ then
   while true; do
     read -p "" yn
     case $yn in
-        [Yy]* ) break;;
-        [Nn]* ) exit 0;;
-        * ) echo "Please answer with Yes or No [y|n].";;
+      [Yy]* ) break;;
+      [Nn]* ) exit 0;;
+      * ) echo "Please answer with Yes or No [y|n].";;
     esac
   done
   echo ""
@@ -38,9 +38,9 @@ echo "Do you wish to continue?"
 while true; do
   read -p "" yn
   case $yn in
-      [Yy]* ) break;;
-      [Nn]* ) exit 0;;
-      * ) echo "Please answer with Yes or No [y|n].";;
+    [Yy]* ) break;;
+    [Nn]* ) exit 0;;
+    * ) echo "Please answer with Yes or No [y|n].";;
   esac
 done
 
@@ -51,7 +51,8 @@ generateKey () {
   P1=`cat /dev/urandom | tr -cd abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789 | head -c 3`
   P2=`cat /dev/urandom | tr -cd abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789 | head -c 3`
   P3=`cat /dev/urandom | tr -cd abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789 | head -c 3`
-  IPSEC_PSK="$P1$P2$P3"
+  P4=`cat /dev/urandom | tr -cd abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789 | head -c 3`
+  IPSEC_PSK="$P1$P2$P3$P4"
 }
 
 echo "The VPN needs a private PSK key."
@@ -60,9 +61,9 @@ echo "(Otherwise a random key is generated)"
 while true; do
   read -p "" yn
   case $yn in
-      [Yy]* ) echo ""; echo "Enter your preferred key:"; read -p "" IPSEC_PSK; break;;
-      [Nn]* ) generateKey; break;;
-      * ) echo "Please answer with Yes or No [y|n].";;
+    [Yy]* ) echo ""; echo "Enter your preferred key:"; read -p "" IPSEC_PSK; break;;
+    [Nn]* ) generateKey; break;;
+    * ) echo "Please answer with Yes or No [y|n].";;
   esac
 done
 
@@ -159,20 +160,16 @@ fi
 mkdir -p /opt/src
 cd /opt/src
 echo "Downloading LibreSwan's source..."
-wget -qO- https://download.libreswan.org/libreswan-3.12.tar.gz | tar xvz > /dev/null
-cd libreswan-3.12
+wget -qO- https://download.libreswan.org/libreswan-3.13.tar.gz | tar xvz > /dev/null
+cd libreswan-3.13
 echo "Compiling LibreSwan..."
 make programs > /dev/null
 echo "Installing LibreSwan..."
 make install > /dev/null
 
-if [ "$?" = "1" ]
-then
-  echo "An unexpected error occured!"
-  exit 0
-fi
-
 echo "Preparing various configuration files..."
+
+echo "/etc/ipsec.conf"
 
 cat > /etc/ipsec.conf <<EOF
 version 2.0
@@ -209,10 +206,19 @@ conn vpnpsk
   dpdaction=clear
 EOF
 
-/bin/cp -f /etc/ipsec.secrets /etc/ipsec.secrets.old
+echo "/etc/ipsec.secrets"
+
+if [ -f /etc/ipsec.secret ];
+then
+  /bin/cp -f /etc/ipsec.secrets /etc/ipsec.secrets.old
+  echo "Backup /etc/ipsec.secrets -> /etc/ipsec.secrets.old"
+fi
+
 cat > /etc/ipsec.secrets <<EOF
 $IPADDRESS  %any  : PSK "$IPSEC_PSK"
 EOF
+
+echo "/etc/xl2tpd/xl2tpd.conf"
 
 cat > /etc/xl2tpd/xl2tpd.conf <<EOF
 [global]
@@ -222,8 +228,8 @@ port = 1701
 ;debug state = yes
 ;debug tunnel = yes
 [lns default]
-ip range = 192.168.42.10-192.168.42.250
-local ip = 192.168.42.1
+ip range = 10.10.10.2-10.10.10.254
+local ip = 10.10.10.1
 require chap = yes
 refuse pap = yes
 require authentication = yes
@@ -232,6 +238,8 @@ name = l2tpd
 pppoptfile = /etc/ppp/options.xl2tpd
 length bit = yes
 EOF
+
+echo "/etc/ppp/options.xl2tpd"
 
 cat > /etc/ppp/options.xl2tpd <<EOF
 ipcp-accept-local
@@ -250,65 +258,105 @@ lcp-echo-interval 60
 connect-delay 5000
 EOF
 
+echo "/etc/ppp/chap-secrets"
+
+if [ -f /etc/ppp/chap-secrets ];
+then
 /bin/cp -f /etc/ppp/chap-secrets /etc/ppp/chap-secrets.old
+  echo "Backup /etc/ppp/chap-secrets -> /etc/ppp/chap-secrets.old"
+fi
+
 cat > /etc/ppp/chap-secrets <<EOF
 # Secrets for authentication using CHAP
 # client  server  secret  IP addresses
-$VPN_USER  l2tpd  $VPN_PASSWORD  *
+"$VPN_USER" "*" "$VPN_PASSWORD" "*"
 EOF
 
-/bin/cp -f /etc/rc.local /etc/rc.local.old
-cat > /etc/rc.local <<EOF
-#!/bin/sh -e
-#
-# rc.local
-#
-# This script is executed at the end of each multiuser runlevel.
-# Make sure that the script will "exit 0" on success or any other
-# value on error.
-#
-# In order to enable or disable this script just change the execution
-# bits.
-#
-# By default this script does nothing.
-iptables --table nat --append POSTROUTING --jump MASQUERADE
-echo 1 > /proc/sys/net/ipv4/ip_forward
-for each in /proc/sys/net/ipv4/conf/*
-do
-  echo 0 > $each/accept_redirects
-  echo 0 > $each/send_redirects
-done
-/usr/sbin/service ipsec restart
-/usr/sbin/service xl2tpd restart
+echo "/etc/init.d/ipsec-assist"
+
+cat > /etc/init.d/ipsec-assist <<'EOF'
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Service that starts up XL2TPD and IPSEC
+# Description:       Service that starts up XL2TPD and IPSEC
+### END INIT INFO
+# Author: Phil Plückthun <phil@plckthn.me>
+
+# Copyright (C) 2014-2015 Phil Plückthun <phil@plckthn.me>
+# Built upon https://help.ubuntu.com/community/L2TPServer
+
+case "$1" in
+  start)
+    echo "Starting up the goodness of IPSec and XL2TPD"
+    iptables --table nat --append POSTROUTING --jump MASQUERADE
+    echo 1 > /proc/sys/net/ipv4/ip_forward
+    for each in /proc/sys/net/ipv4/conf/*
+    do
+      echo 0 > $each/accept_redirects
+      echo 0 > $each/send_redirects
+    done
+    /usr/sbin/service ipsec start
+    /usr/sbin/service xl2tpd start
+    ;;
+  stop)
+    echo "Stopping IPSec and XL2TPD"
+    iptables --table nat --flush
+    echo 0 > /proc/sys/net/ipv4/ip_forward
+    /usr/sbin/service ipsec stop
+    /usr/sbin/service xl2tpd stop
+    ;;
+  restart)
+    echo "Restarting IPSec and XL2TPD"
+    iptables --table nat --append POSTROUTING --jump MASQUERADE
+    echo 1 > /proc/sys/net/ipv4/ip_forward
+    for each in /proc/sys/net/ipv4/conf/*
+    do
+      echo 0 > $each/accept_redirects
+      echo 0 > $each/send_redirects
+    done
+    /usr/sbin/service ipsec restart
+    /usr/sbin/service xl2tpd restart
+    ;;
+esac
+
+exit 0
 EOF
 
-echo "Applying changes..."
+chmod 755 /etc/init.d/ipsec-assist
 
-iptables --table nat --append POSTROUTING --jump MASQUERADE > /dev/null
-echo 1 > /proc/sys/net/ipv4/ip_forward
-for each in /proc/sys/net/ipv4/conf/*
-do
-  echo 0 > $each/accept_redirects
-  echo 0 > $each/send_redirects
-done
+echo "Applying settings..."
 
 if [ ! -f /etc/ipsec.d/cert8.db ] ; then
-   echo > /var/tmp/libreswan-nss-pwd
-   /usr/bin/certutil -N -f /var/tmp/libreswan-nss-pwd -d /etc/ipsec.d > /dev/null
-   /bin/rm -f /var/tmp/libreswan-nss-pwd
+  echo > /var/tmp/libreswan-nss-pwd
+  /usr/bin/certutil -N -f /var/tmp/libreswan-nss-pwd -d /etc/ipsec.d > /dev/null
+  /bin/rm -f /var/tmp/libreswan-nss-pwd
 fi
 
 /sbin/sysctl -p > /dev/null
 
-echo "Starting IPSec and XL2TP services..."
+echo "Disabling the IPSec and XL2TP auto start..."
 
-/usr/sbin/service ipsec restart > /dev/null
-/usr/sbin/service xl2tpd restart > /dev/null
+/usr/sbin/service ipsec stop
+/usr/sbin/service xl2tpd stop
 
-echo "Success!"
+update-rc.d -f xl2tpd remove
+update-rc.d -f ipsec remove
+
+echo "Adding the new auto start..."
+
+update-rc.d ipsec-assist defaults
+
+echo "Starting up the VPN..."
+
+/usr/sbin/service ipsec-assist start
+
+echo "Done."
 echo ""
-
-clear
 
 echo "============================================================"
 echo "Host: $PUBLICIP (Or a domain pointing to your server)"
@@ -321,9 +369,9 @@ echo "Your VPN server password is hidden. Would you like to reveal it?"
 while true; do
   read -p "" yn
   case $yn in
-      [Yy]* ) clear; break;;
-      [Nn]* ) exit 0;;
-      * ) echo "Please answer with Yes or No [y|n].";;
+    [Yy]* ) clear; break;;
+    [Nn]* ) exit 0;;
+    * ) echo "Please answer with Yes or No [y|n].";;
   esac
 done
 

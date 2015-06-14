@@ -14,7 +14,7 @@ Script has been tested on:
 
 **Feel free to test it on more distributions and please report back to me!**
 
-Copyright (C) 2014 Phil Plückthun <phil@plckthn.me><br>
+Copyright (C) 2014-2015 Phil Plückthun <phil@plckthn.me><br>
 Adapting script for Arch Linux - Dennis Anfossi <danfossi@itfor.it><br>
 Fixing up some code - Edwin Ang [<@theroyalstudent>](https://github.com/theroyalstudent/)
 
@@ -29,6 +29,14 @@ Based on the work of Thomas Sarlandie (Copyright 2012)
 ```
 wget https://raw.github.com/philplckthun/setup-simple-ipsec-l2tp-vpn/master/setup.sh
 sudo sh setup.sh
+```
+
+This will install a new service called `ipsec-assist`. With it you can safely start, stop and restart the VPN server:
+
+```
+sudo service ipsec-assist stop
+sudo service ipsec-assist start
+sudo service ipsec-assist restart
 ```
 
 ## For Arch Linux
@@ -53,8 +61,13 @@ Ports `1701`, `500` and `4500` must be opened for the VPN to work!
 
 Enjoy your very own (secure) VPN!
 
-Some Notes
-==========
+# Warning!
+
+> June 1st, 2015: CVE-2015-3204: malicious payload causing IKE daemon restart
+
+**If you've used the script before the 14th of June, please update LibreSwan the server!**
+
+# Some Notes
 
 Clients are configured to use Google's Public DNS servers, when
 the VPN connection is active:
