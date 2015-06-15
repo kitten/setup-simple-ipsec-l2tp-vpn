@@ -2,6 +2,7 @@
 #    Setup Simple IPSec/L2TP VPN server for Ubuntu and Debian
 #
 #    Copyright (C) 2014-2015 Phil Plückthun <phil@plckthn.me>
+#    Copyright (C) 2015 Edwin Ang <edwin@theroyalstudent.com> for hotfixes
 #    Based on the work of Lin Song (Copyright 2014)
 #    Based on the work of Viljo Viitanen (Setup Simple PPTP VPN server for Ubuntu and Debian)
 #    Based on the work of Thomas Sarlandie (Copyright 2012)
@@ -98,6 +99,7 @@ echo ""
 echo ""
 
 echo "Making sure that apt-get is updated and wget is installed..."
+echo ""
 
 apt-get update > /dev/null
 
@@ -105,7 +107,20 @@ if [ `sudo dpkg-query -l | grep wget | wc -l` = 0 ] ; then
   apt-get install wget -y  > /dev/null
 fi
 
-PUBLICIP=`wget -q -O - http://wtfismyip.com/text`
+echo "What type of connection will you be using this VPN server on?"
+echo "Enter the corresponding number for:"
+echo "4) IPv4"
+echo "6) IPv6"
+
+while true; do
+  read -p "" yn
+  case $yn in
+    [4]* ) PUBLICIP=`wget -q -O - http://ipv4.wtfismyip.com/text`; break;;
+    [6]* ) PUBLICIP=`wget -q -O - http://ipv6.wtfismyip.com/text`; break;;
+    * ) echo "Please answer with 4 or 6 [4|6].";;
+  esac
+done
+
 if [ "x$PUBLICIP" = "x" ]
 then
   echo "Your server's external IP address could not be detected!"
@@ -210,7 +225,7 @@ echo "/etc/ipsec.secrets"
 
 if [ -f /etc/ipsec.secrets ];
 then
-  /bin/cp -f /etc/ipsec.secrets /etc/ipsec.secrets.old
+  cp -f /etc/ipsec.secrets /etc/ipsec.secrets.old
   echo "Backup /etc/ipsec.secrets -> /etc/ipsec.secrets.old"
 fi
 
@@ -262,7 +277,7 @@ echo "/etc/ppp/chap-secrets"
 
 if [ -f /etc/ppp/chap-secrets ];
 then
-/bin/cp -f /etc/ppp/chap-secrets /etc/ppp/chap-secrets.old
+  cp -f /etc/ppp/chap-secrets /etc/ppp/chap-secrets.old
   echo "Backup /etc/ppp/chap-secrets -> /etc/ppp/chap-secrets.old"
 fi
 
@@ -382,7 +397,10 @@ echo "Username: $VPN_USER"
 echo "Password: $VPN_PASSWORD"
 echo "============================================================"
 
-echo "If you plan to keep the VPN server generated with this script on the internet for a long time (a day or more), consider securing it to possible attacks!"
+echo "Note:"
+echo "* Before connecting with a Windows client, please see: http://support.microsoft.com/kb/926179"
+echo "* Ports 1701, 500 and 4500 must be opened for the VPN to work!"
+echo "* If you plan to keep the VPN server generated with this script on the internet for a long time (a day or more), consider securing it to possible attacks!"
 
 sleep 1
 exit 0

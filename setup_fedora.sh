@@ -2,7 +2,8 @@
 #    Setup Simple IPSec/L2TP VPN server for Fedora Linux
 #
 #    Dennis Anfossi <danfossi@itfor.it> Copyright (C) 2015 
-#	    Porting of work of Phil Plückthun <phil@plckthn.me> on Fedora
+#	   Porting of work of Phil Plückthun <phil@plckthn.me> on Fedora
+#    Copyright (C) 2015 Edwin Ang <edwin@theroyalstudent.com> for hotfixes
 #    Based on the work of Lin Song (Copyright 2014)
 #    Based on the work of Viljo Viitanen (Setup Simple PPTP VPN server for Ubuntu and Debian)
 #    Based on the work of Thomas Sarlandie (Copyright 2012)
@@ -51,7 +52,8 @@ generateKey () {
   P1=`cat /dev/urandom | tr -cd abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789 | head -c 3`
   P2=`cat /dev/urandom | tr -cd abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789 | head -c 3`
   P3=`cat /dev/urandom | tr -cd abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789 | head -c 3`
-  IPSEC_PSK="$P1$P2$P3"
+  P4=`cat /dev/urandom | tr -cd abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789 | head -c 3`
+  IPSEC_PSK="$P1$P2$P3$P4"
 }
 
 echo "The VPN needs a private PSK key."
@@ -114,7 +116,20 @@ else
         yum install net-tools -y > /dev/null
 fi
 
-PUBLICIP=`wget -q -O - http://wtfismyip.com/text`
+echo "What type of connection will you be using this VPN server on?"
+echo "Enter the corresponding number for:"
+echo "4) IPv4"
+echo "6) IPv6"
+
+while true; do
+  read -p "" yn
+  case $yn in
+    [4]* ) PUBLICIP=`wget -q -O - http://ipv4.wtfismyip.com/text`; break;;
+    [6]* ) PUBLICIP=`wget -q -O - http://ipv6.wtfismyip.com/text`; break;;
+    * ) echo "Please answer with 4 or 6 [4|6].";;
+  esac
+done
+
 if [ "x$PUBLICIP" = "x" ]
 then
   echo "Your server's external IP address could not be detected!"
@@ -224,6 +239,12 @@ conn vpnpsk
   dpdaction=clear
 EOF
 
+if [ -f /etc/ipsec.secrets ];
+then
+  cp -f /etc/ipsec.secrets /etc/ipsec.secrets.old
+  echo "Backup /etc/ipsec.secrets -> /etc/ipsec.secrets.old"
+fi
+
 cat > /etc/ipsec.secrets <<EOF
 $IPADDRESS  %any  : PSK "$IPSEC_PSK"
 EOF
@@ -263,6 +284,12 @@ lcp-echo-failure 10
 lcp-echo-interval 60
 connect-delay 5000
 EOF
+
+if [ -f /etc/ppp/chap-secrets ];
+then
+  cp -f /etc/ppp/chap-secrets /etc/ppp/chap-secrets.old
+  echo "Backup /etc/ppp/chap-secrets -> /etc/ppp/chap-secrets.old"
+fi
 
 cat > /etc/ppp/chap-secrets <<EOF
 # Secrets for authentication using CHAP
@@ -378,7 +405,7 @@ echo "Password: $VPN_PASSWORD"
 echo "============================================================"
 echo ""
 echo "Note:"
-echo "* Before connect with windows client see: http://support.microsoft.com/kb/926179"
+echo "* Before connecting with a Windows client, please see: http://support.microsoft.com/kb/926179"
 echo "* Ports 1701, 500 and 4500 must be opened for the VPN to work!"
 echo "* If you plan to keep the VPN server generated with this script on the internet for a long time (a day or more), consider securing it to possible attacks!"
 
