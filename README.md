@@ -15,8 +15,8 @@ Script has been tested on:
 **Feel free to test it on more distributions and please report back to me!**
 
 Copyright (C) 2014-2015 Phil Plückthun <phil@plckthn.me><br>
-Adapting script for Arch Linux - Dennis Anfossi <danfossi@itfor.it><br>
-Fixing up some code - Edwin Ang [<@theroyalstudent>](https://github.com/theroyalstudent/)
+Hotfixes - Edwin Ang <edwin@theroyalstudent.com><br>
+Adapting script for Arch Linux - Dennis Anfossi <danfossi@itfor.it>
 
 [Based on the work of Lin Song](https://gist.github.com/hwdsl2/9030462) (Copyright 2014)<br>
 [Based on the work of Viljo Viitanen](https://github.com/viljoviitanen/setup-simple-pptp-vpn) (Setup Simple PPTP VPN server for Ubuntu and Debian)
@@ -65,7 +65,7 @@ Enjoy your very own (secure) VPN!
 
 > June 1st, 2015: CVE-2015-3204: malicious payload causing IKE daemon restart
 
-**If you've used the script before the 14th of June, please update LibreSwan the server!**
+**If you've used the script before the 14th of June, please update LibreSwan on the server!**
 
 # Some Notes
 
@@ -77,6 +77,8 @@ Only one VPN account is generated!
 To add more accounts, see the file `/etc/ppp/chap-secrets`
 
 *In the future I might add the ability to generate more accounts.*
+
+Before connecting with a Windows client please see: [http://support.microsoft.com/kb/926179](http://support.microsoft.com/kb/926179)
 
 If you plan to keep the VPN server generated with this script on the internet for a
 long time (a day or more), consider securing it to possible attacks!
