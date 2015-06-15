@@ -208,7 +208,7 @@ EOF
 
 echo "/etc/ipsec.secrets"
 
-if [ -f /etc/ipsec.secret ];
+if [ -f /etc/ipsec.secrets ];
 then
   /bin/cp -f /etc/ipsec.secrets /etc/ipsec.secrets.old
   echo "Backup /etc/ipsec.secrets -> /etc/ipsec.secrets.old"
