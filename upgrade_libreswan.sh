@@ -13,7 +13,7 @@ then
   exit 0
 fi
 
-ipsec --version | grep 3.13 > /dev/null
+ipsec --version | grep "Libreswan 3.13" > /dev/null
 if [ "$?" = "0" ]
 then
   echo "You already have LibreSwan 3.13 installed!"
@@ -54,18 +54,18 @@ make programs > /dev/null
 echo "Installing LibreSwan..."
 make install > /dev/null
 
-ipsec --version | grep 3.13 > /dev/null
+ipsec --version | grep "Libreswan 3.13" > /dev/null
 
 if [ "$?" = "0" ]
 then
   echo "LibreSwan 3.13 was installed successfully!"
-  
+
   # this script is for users with an existing instlallation, so they most probably will not have the ipsec-assist service installed.
 
   service xl2tpd restart
   service ipsec restart
 
-  exit 0;;
+  exit 0
 fi
 
 echo "LibreSwan 3.13 was not installed successfully :/"
