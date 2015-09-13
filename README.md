@@ -64,8 +64,9 @@ Enjoy your very own (secure) VPN!
 # Warning!
 
 > June 1st, 2015: CVE-2015-3204: malicious payload causing IKE daemon restart
+> August 24st, 2015: CVE-2015-3240: Receiving a bad DH gx causes IKE daemon restart
 
-**If you've used the script before the 14th of June, please update LibreSwan on the server!**
+**If you've used the script before the August 24st, 2015, please update LibreSwan on the server!**
 
 # Some Notes
 
