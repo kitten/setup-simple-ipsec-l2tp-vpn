@@ -54,11 +54,11 @@ make programs > /dev/null
 echo "Installing LibreSwan..."
 make install > /dev/null
 
-ipsec --version | grep "Libreswan 3.155" > /dev/null
+ipsec --version | grep "Libreswan 3.15" > /dev/null
 
 if [ "$?" = "0" ]
 then
-  echo "LibreSwan 3.155 was installed successfully!"
+  echo "LibreSwan 3.15 was installed successfully!"
 
   # this script is for users with an existing installation, so they most probably will not have the ipsec-assist service installed.
 
