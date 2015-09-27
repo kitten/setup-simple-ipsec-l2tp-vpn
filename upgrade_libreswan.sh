@@ -44,7 +44,12 @@ done
 
 echo ""
 
+echo "Updating apt-get and installing new dependencies needed to build LibreSwan 3.15..."
+apt-get update > /dev/null
+apt-get install libevent-dev xmlto -y  > /dev/null
+
 mkdir -p /opt/src
+
 cd /opt/src
 echo "Downloading LibreSwan's source..."
 wget -qO- https://download.libreswan.org/libreswan-3.15.tar.gz | tar xvz > /dev/null
