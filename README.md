@@ -31,6 +31,15 @@ wget https://raw.github.com/philplckthun/setup-simple-ipsec-l2tp-vpn/master/setu
 sudo sh setup.sh
 ```
 
+> NOTE: Debian 7 (Wheezy) does not have the newer libnss3 version (>=3.15) that Libreswan requires.
+> The following workaround is required BEFORE running vpnsetup.sh.
+> Thanks to @hwdsl2
+> 
+> ```
+> wget https://gist.githubusercontent.com/hwdsl2/5a769b2c4436cdf02a90/raw/e08a04d76240af8acbfe5d6f4e0057c1bf5c660e/vpnsetup-debian-7-workaround.sh
+> sudo sh vpnsetup-debian-7-workaround.sh
+> ```
+
 This will install a new service called `ipsec-assist`. With it you can safely start, stop and restart the VPN server:
 
 ```
