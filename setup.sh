@@ -238,6 +238,7 @@ echo "/etc/xl2tpd/xl2tpd.conf"
 cat > /etc/xl2tpd/xl2tpd.conf <<EOF
 [global]
 port = 1701
+auth file = /etc/ppp/chap-secrets
 ;debug avp = yes
 ;debug network = yes
 ;debug state = yes
