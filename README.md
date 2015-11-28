@@ -94,3 +94,11 @@ If you plan to keep the VPN server generated with this script on the internet fo
 long time (a day or more), consider securing it to possible attacks!
 
 If you run this script on EC2, the IP used in the config files will be different to the instance's public-facing IP. This is because Amazon performs one-to-one NAT on EC2 instances.
+
+Android 6 now defaults to ESP with SHA2. In order to make it working and solve the `NO_PROPOSAL_CHOSEN` you can change these config of *ipsec.conf* to:
+```
+ike=3des-sha2,aes-sha2
+phase2alg=3des-sha2,aes-sha2
+sha2-truncbug=yes
+``` 
+More information please see: [https://libreswan.org/wiki/FAQ#Android_6.0_connection_comes_up_but_no_packet_flow](https://libreswan.org/wiki/FAQ#Android_6.0_connection_comes_up_but_no_packet_flow)
