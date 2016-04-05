@@ -308,7 +308,7 @@ cat > /etc/init.d/ipsec-assist <<'EOF'
 case "$1" in
   start)
     echo "Starting up the goodness of IPSec and XL2TPD"
-    iptables --table nat --append POSTROUTING --jump MASQUERADE
+    iptables --table nat ! -d 127.0.0.1 --append POSTROUTING --jump MASQUERADE
     echo 1 > /proc/sys/net/ipv4/ip_forward
     for each in /proc/sys/net/ipv4/conf/*
     do
@@ -327,7 +327,7 @@ case "$1" in
     ;;
   restart)
     echo "Restarting IPSec and XL2TPD"
-    iptables --table nat --append POSTROUTING --jump MASQUERADE
+    iptables --table nat ! -d 127.0.0.1 --append POSTROUTING --jump MASQUERADE
     echo 1 > /proc/sys/net/ipv4/ip_forward
     for each in /proc/sys/net/ipv4/conf/*
     do
