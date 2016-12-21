@@ -9,7 +9,7 @@ Tested on:
 
 ## **Deprecated!**
 
-[**This script has been deprecated in favor for my other script "setup-strong-strongswan"**](https://github.com/philplckthun/setup-strong-strongswan)
+[**This script has been deprecated in favor for my other script "setup-strong-strongswan"**](https://github.com/philpl/setup-strong-strongswan)
 
 This script is very fragmented. The other scripts for Arch Linux, CentOS and Fedora
 are not up to date. They are insecure and don't feature a init.d startup and helper
@@ -20,14 +20,14 @@ IPSec over L2TP and "pure" IPSec with the same installation. It is also based on
 my work on a strongswan docker container, which will be much more regularly
 maintained as well.
 
-[philplckthun/setup-strong-strongswan](https://github.com/philplckthun/setup-strong-strongswan)
+[philpl/setup-strong-strongswan](https://github.com/philpl/setup-strong-strongswan)
 
 ## Installation
 
 ### For Ubuntu and Debian
 
 ```
-wget https://raw.github.com/philplckthun/setup-simple-ipsec-l2tp-vpn/master/setup.sh
+wget https://raw.github.com/philpl/setup-simple-ipsec-l2tp-vpn/master/setup.sh
 sudo sh setup.sh
 ```
 
@@ -51,14 +51,14 @@ sudo service ipsec-assist restart
 ### For Arch Linux
 
 ```
-wget https://raw.github.com/philplckthun/setup-simple-ipsec-l2tp-vpn/master/setup_archlinux.sh
+wget https://raw.github.com/philpl/setup-simple-ipsec-l2tp-vpn/master/setup_archlinux.sh
 sudo sh setup_archlinux.sh
 ```
 
 ### For Fedora
 
 ```
-wget https://raw.github.com/philplckthun/setup-simple-ipsec-l2tp-vpn/master/setup_fedora.sh
+wget https://raw.github.com/philpl/setup-simple-ipsec-l2tp-vpn/master/setup_fedora.sh
 sudo sh setup_fedora.sh
 ```
 
