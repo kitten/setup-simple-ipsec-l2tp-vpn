@@ -200,7 +200,7 @@ conn vpnpsk
   connaddrfamily=ipv4
   auto=add
   left=$IPADDRESS
-  leftid=$IPADDRESS
+  leftid=$PUBLIC_IP
   leftsubnet=$IPADDRESS/32
   leftnexthop=%defaultroute
   leftprotoport=17/1701
@@ -230,7 +230,7 @@ then
 fi
 
 cat > /etc/ipsec.secrets <<EOF
-$IPADDRESS  %any  : PSK "$IPSEC_PSK"
+$PUBLIC_IP  %any  : PSK "$IPSEC_PSK"
 EOF
 
 echo "/etc/xl2tpd/xl2tpd.conf"
